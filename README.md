@@ -47,7 +47,8 @@ import { remapKeys } from 'curry-remap-keys'
 
 // Same user and remapping object as above
 
-const userRemapper = rempKeys(remapping)
+// Partially apply remapKeys for reusing
+const userRemapper = remapKeys(remapping)
 
 console.log(userRemapper(user))
 // {
