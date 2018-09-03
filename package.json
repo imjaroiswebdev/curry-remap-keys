@@ -7,7 +7,8 @@
     "dev": "watch 'npm run build' src",
     "build": "babel src -d build",
     "test": "standard && jest",
-    "test:watch": "npm test -- --watch"
+    "test:watch": "npm test -- --watch",
+    "prepublish": "npm run build"
   },
   "standard": {
     "ignore": [
