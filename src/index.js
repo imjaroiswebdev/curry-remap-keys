@@ -7,14 +7,14 @@
  * ogObj and its signature must be a plain key-value pair relation for remapping
  */
 export const remapKeys = (mapping, ogObj) => {
-  const validObject = obj => (typeof obj === 'object' && !obj.length)
+  const validObject = obj => (typeof obj === 'object' && !(obj instanceof Array))
   const validMappingObj = mapping && validObject(mapping)
   const currying = typeof ogObj === 'undefined'
   const validOriginalObj = currying || validObject(ogObj)
 
   if (validMappingObj && Object.keys(mapping).length === 0) {
     return ogObj
-  } else if (!validMappingObj && !validOriginalObj) {
+  } else if (!validMappingObj || !validOriginalObj) {
     throw Error('Invalid parameters were supplied')
   } else if (currying) {
     return remapper(mapping)

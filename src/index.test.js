@@ -42,6 +42,24 @@ test('After remapping the resulting object must maintain its keys not being rema
   expect(remapKeys(remapping, user)).toEqual(expected)
 })
 
+test('If invalid parameters are supplied then it must throw an exception', () => {
+  const user = {
+    user_id: '9e947a10-af08-11e8-9b04-d3ce91a97e8d',
+    order_id: 'aa4025d0-af08-11e8-9215-1106c9538c60',
+    productName: 'The best notebook of the whole world',
+    qty: '1'
+  }
+
+  const remapping = [
+    'userId',
+    'orderId'
+  ]
+
+  expect(() => {
+    remapKeys(remapping, user)
+  }).toThrow(/Invalid/)
+})
+
 test('It should be posible to partially apply the remapKeys function through currying', () => {
   const user = {
     user_id: '9e947a10-af08-11e8-9b04-d3ce91a97e8d',
@@ -66,5 +84,3 @@ test('It should be posible to partially apply the remapKeys function through cur
 
   expect(userRemapper(user)).toEqual(expected)
 })
-
-// TODO: Add Test for validation of parameters
