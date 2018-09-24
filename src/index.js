@@ -1,10 +1,10 @@
 /**
  * Remaps (rename) the keys of ogObj based on the key-value pair renaming
  * object (mapping - second parameter).
- * @param {Object} ogObj Original object that will be receiving one or more of
- * its keys remppaed
  * @param {Object} mapping Object that defines the remapping of the keys of
  * ogObj and its signature must be a plain key-value pair relation for remapping
+ * @param {Object} ogObj Original object that will be receiving one or more of
+ * its keys remppaed
  */
 export const remapKeys = (mapping, ogObj) => {
   const validObject = obj => (typeof obj === 'object' && !(obj instanceof Array))
@@ -48,5 +48,23 @@ function remapper (mapping) {
     const updatedObj = Object.assign({}, cleanObj, remappedObj)
 
     return updatedObj
+  }
+}
+
+function remapDeepKey (ogKey, newKeyName, path, obj) {
+  const endOfPathKey = path[(path.length - 1)]
+
+  try {
+    const endOfPathObj = followPath(path, obj)
+
+    const mapping = {
+      [ogKey]: newKeyName
+    }
+
+    const remappedEndOfPathObj = remapKeys(mapping, endOfPathObj)
+
+    return obj
+  } catch (err) {
+    throw Error('Invalid parameters were supplied')
   }
 }
