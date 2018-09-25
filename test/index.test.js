@@ -42,7 +42,7 @@ test('After remapping the resulting object must maintain its keys not being rema
   expect(remapKeys(remapping, user)).toEqual(expected)
 })
 
-test.skip('It must remap nested key names and the resulting object must maintain its keys not being remapped ontouched', () => {
+test('It must remap nested key names and the resulting object must maintain its keys not being remapped ontouched', () => {
   const user = {
     user_id: '9e947a10-af08-11e8-9b04-d3ce91a97e8d',
     order_id: 'aa4025d0-af08-11e8-9215-1106c9538c60',
