@@ -1,5 +1,6 @@
 import { pathAssign } from './pathAssign'
 import { followPath } from './followPath'
+import { cloneObj } from './cloneObj'
 
 /**
  * Remaps (rename) the keys of ogObj based on the key-value pair renaming
@@ -34,7 +35,7 @@ function remapper (mapping) {
     const ogKeys = Object.keys(ogObj)
 
     Object.keys(mapping).forEach(doKeyRemap) // Will apply the mapping
-    ogKeys.forEach(cleaner) // Will clean the result of the original keys
+    ogKeys.forEach(cleanOgKeys) // Will clean the result of the original keys
 
     function doKeyRemap (ogKeyName) {
       let newKeyName = ''
@@ -60,15 +61,25 @@ function remapper (mapping) {
         remappedObj[newKeyName] = ogObj[ogKeyName]
       } else if (isDeepRemapRule) {
         newKeyName = remapRule[0]
-        const keysPath = remapRule[1]
-        const value = followPath(keysPath, ogObj)
-        remappedObj = pathAssign(value, keysPath, remappedObj)
+        const pathTillRemapping = remapRule[1]
+        const endOfPathKeys = Object.keys(
+          followPath(pathTillRemapping, ogObj)
+        )
+          .filter(key => key !== ogKeyName)
+          .concat([newKeyName])
+
+        const updatedObj = endOfPathKeys.reduce(
+          fillDeepKeyLevel(pathTillRemapping, ogObj, ogKeyName, newKeyName),
+          remappedObj
+        )
+
+        remappedObj = cloneObj(updatedObj)
       } else {
         throw Error('Invalid parameters were supplied. A remap rule must be a none empty string or Array')
       }
     }
 
-    function cleaner (key) {
+    function cleanOgKeys (key) {
       const isBlackListed = blacklist.includes(key)
       if (isBlackListed) {
         return
@@ -80,5 +91,21 @@ function remapper (mapping) {
     const updatedObj = Object.assign({}, cleanObj, remappedObj)
 
     return updatedObj
+  }
+}
+
+function fillDeepKeyLevel (partialKeysPath, ogObj, ogKeyName, newKeyName) {
+  return function (updatedObj, key) {
+    const keysPath = [...partialKeysPath, key]
+    const pathToValue = (function () {
+      if (key === newKeyName) {
+        return keysPath.filter(key => key !== newKeyName).concat([ogKeyName])
+      }
+
+      return keysPath
+    })()
+    const value = followPath(pathToValue, ogObj)
+
+    return pathAssign(value, keysPath, updatedObj)
   }
 }
