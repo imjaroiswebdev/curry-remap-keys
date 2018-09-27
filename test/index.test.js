@@ -54,12 +54,17 @@ test('It must remap nested key names and the resulting object must maintain its 
         city: 'Los Angeles, CA',
         zip: '90017'
       }
+    },
+    customerInfo: {
+      interested_in: ['notebooks', 'smartphones', 'smart tv'],
+      isOneTimeBuyer: false
     }
   }
 
   const remapping = {
     user_id: 'userId',
-    billing_address: ['billingAddress', ['billingInfo', 'locationInfo']]
+    billing_address: ['billingAddress', ['billingInfo', 'locationInfo']],
+    interested_in: ['interestedIn', ['customerInfo']]
   }
 
   const expected = {
@@ -73,6 +78,10 @@ test('It must remap nested key names and the resulting object must maintain its 
         city: 'Los Angeles, CA',
         zip: '90017'
       }
+    },
+    customerInfo: {
+      interestedIn: ['notebooks', 'smartphones', 'smart tv'],
+      isOneTimeBuyer: false
     }
   }
 

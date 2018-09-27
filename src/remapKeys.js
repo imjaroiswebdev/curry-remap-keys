@@ -1,5 +1,5 @@
 import { pathAssign } from './pathAssign'
-import { followPath } from './followPath'
+import { pathValue } from './pathValue'
 import { cloneObj } from './cloneObj'
 
 /**
@@ -63,7 +63,7 @@ function remapper (mapping) {
         newKeyName = remapRule[0]
         const pathTillRemapping = remapRule[1]
         const endOfPathKeys = Object.keys(
-          followPath(pathTillRemapping, ogObj)
+          pathValue(pathTillRemapping, ogObj)
         )
           .filter(key => key !== ogKeyName)
           .concat([newKeyName])
@@ -104,7 +104,7 @@ function fillDeepKeyLevel (partialKeysPath, ogObj, ogKeyName, newKeyName) {
 
       return keysPath
     })()
-    const value = followPath(pathToValue, ogObj)
+    const value = pathValue(pathToValue, ogObj)
 
     return pathAssign(value, keysPath, updatedObj)
   }

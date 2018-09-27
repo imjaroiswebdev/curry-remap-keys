@@ -3,7 +3,7 @@
  * @param {Array} path Keys nesting path from top to lowest level
  * @param {Object} obj Object to be traveled
  */
-export function followPath (path, obj) {
+export function pathValue (path, obj) {
   let currentPathLevel = obj
   let result = null
 
