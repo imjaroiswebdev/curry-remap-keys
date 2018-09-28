@@ -2,19 +2,21 @@ import { pathAssign } from './pathAssign'
 import { pathValue } from './pathValue'
 import { cloneObj } from './cloneObj'
 
+import _isObject from './internal/_isObject'
+import _isString from './internal/_isString'
+
 /**
  * Remaps (rename) the keys of ogObj based on the key-value pair renaming
  * object (mapping - second parameter).
- * @param {Object} mapping Object that defines the remapping of the keys of
+ * @param {object} - mapping Object that defines the remapping of the keys of
  * ogObj and its signature must be a plain key-value pair relation for remapping
- * @param {Object} ogObj Original object that will be receiving one or more of
+ * @param {object} - ogObj Original object that will be receiving one or more of
  * its keys remppaed
  */
 export const remapKeys = (mapping, ogObj) => {
-  const isValidObject = obj => (typeof obj === 'object' && !(obj instanceof Array))
-  const isValidMappingObj = mapping && isValidObject(mapping)
+  const isValidMappingObj = mapping && _isObject(mapping)
   const isCurrying = typeof ogObj === 'undefined'
-  const isValidOriginalObj = isCurrying || isValidObject(ogObj)
+  const isValidOriginalObj = isCurrying || _isObject(ogObj)
 
   if (isValidMappingObj && Object.keys(mapping).length === 0) {
     return ogObj
@@ -44,8 +46,7 @@ function remapper (mapping) {
       const isSimpleRemapRule = (function () {
         // Simple remap: key-value pair representing the remap of a key
         // at the base level of the object.
-        return typeof remapRule === 'string' &&
-          remapRule.length > 0
+        return _isString(remapRule) && remapRule.length > 0
       })()
 
       const isDeepRemapRule = (function () {

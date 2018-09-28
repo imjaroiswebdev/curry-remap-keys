@@ -1,5 +1,7 @@
 import { cloneObj } from './cloneObj'
 
+import _isObject from './internal/_isObject'
+
 export function pathAssign (value, keysPath, ogObject) {
   const ogObjectClone = cloneObj(ogObject) // Clone of the original object
   const lastIndex = keysPath.length - 1
@@ -10,12 +12,7 @@ export function pathAssign (value, keysPath, ogObject) {
   followPath.forEach(key => {
     let currentPathLevel = refToOgObject[key]
 
-    if (
-      typeof currentPathLevel !== 'object' ||
-      (currentPathLevel instanceof Array) ||
-      (currentPathLevel instanceof Function) ||
-      !(key in refToOgObject)
-    ) {
+    if (!(key in refToOgObject) || !_isObject(currentPathLevel)) {
       refToOgObject[key] = {}
     }
 
