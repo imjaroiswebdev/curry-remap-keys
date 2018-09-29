@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "watch 'npm run build' src",
     "build": "babel src -d build",
+    "build:docs": "npx jsdoc src -r -a all README.md",
     "test": "standard && jest",
     "test:watch": "npm test -- --watch",
     "prepublish": "npm run build",
