@@ -1,7 +1,9 @@
 /**
- * Returns the value of an object nested key
- * @param {array} path - Keys nesting path from top to lowest level
- * @param {object} obj - Object to be traveled
+ * Returns the value of an object nested key.
+ *
+ * @private
+ * @param {array} path - Keys nesting path from top to lowest level.
+ * @param {object} obj - Object source that contains the required value.
  */
 export function pathValue (path, obj) {
   let currentPathLevel = obj

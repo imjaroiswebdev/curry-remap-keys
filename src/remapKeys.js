@@ -6,14 +6,22 @@ import _isObject from './internal/_isObject'
 import _isString from './internal/_isString'
 
 /**
- * Remaps (rename) the keys of ogObj based on the key-value pair renaming
- * object (mapping - second parameter).
- * @param {object} - mapping Object that defines the remapping of the keys of
- * ogObj and its signature must be a plain key-value pair relation for remapping
- * @param {object} - ogObj Original object that will be receiving one or more of
- * its keys remppaed
+ * Remaps (rename) the property keys of an object based on a mapping
+ * configuration supplied.
+ *
+ * @param {object} mapping - Object that defines the remapping of the supplied
+ * object property keys.
+ * @param {object} ogObj - Original object that will be receiving one or more of
+ * its keys remapped.
+ * @returns {(object|function)} - New object with remapped key(s) or a function
+ * configured for remap the keys of its entry. This object maintains the
+ * prototype of the original object supplied or if only a mapping configuration
+ * its supplied then a function expecting an object for being
+ * remapped would be returned.
+ * @see README for the signature of the mapping object which varies depending
+ * on the kind of remapping.
  */
-export const remapKeys = (mapping, ogObj) => {
+export function remapKeys (mapping, ogObj) {
   const isValidMappingObj = mapping && _isObject(mapping)
   const isCurrying = typeof ogObj === 'undefined'
   const isValidOriginalObj = isCurrying || _isObject(ogObj)
@@ -89,7 +97,8 @@ function remapper (mapping) {
       cleanObj[key] = ogObj[key]
     }
 
-    const updatedObj = Object.assign({}, cleanObj, remappedObj)
+    const ogObjPrototype = Object.create(Object.getPrototypeOf(ogObj))
+    const updatedObj = Object.assign(ogObjPrototype, cleanObj, remappedObj)
 
     return updatedObj
   }
