@@ -4,6 +4,7 @@ import { cloneObj } from './cloneObj'
 
 import _isObject from './internal/_isObject'
 import _isString from './internal/_isString'
+import _isArray from './internal/_isArray'
 
 /**
  * Remaps (rename) the property keys of an object based on a mapping
@@ -61,16 +62,26 @@ function remapper (mapping) {
         // Deep remap: Array formed by two elements first is new key name
         // and second a path to follow through object keys find the nested
         // key to be remapped.
+        const newKeyName = remapRule[0]
+        const keysPath = remapRule[1]
+
         return !isSimpleRemapRule &&
-          (remapRule instanceof Array && remapRule.length > 0)
+          (_isArray(remapRule) && remapRule.length === 2) &&
+          _isString(newKeyName) &&
+          (
+            _isArray(keysPath) ||
+            _isString(keysPath)
+          )
       })()
+
+      const INVALID_PARAM_ERR_MSG = 'Invalid parameters were supplied. A remap rule must be a none empty string or Array'
 
       if (isSimpleRemapRule) {
         newKeyName = mapping[ogKeyName]
         remappedObj[newKeyName] = ogObj[ogKeyName]
       } else if (isDeepRemapRule) {
         newKeyName = remapRule[0]
-        const pathTillRemapping = remapRule[1]
+        const pathTillRemapping = keysPathAsArray(remapRule[1])
         const endOfPathKeys = Object.keys(
           pathValue(pathTillRemapping, ogObj)
         )
@@ -84,7 +95,20 @@ function remapper (mapping) {
 
         remappedObj = cloneObj(updatedObj)
       } else {
-        throw Error('Invalid parameters were supplied. A remap rule must be a none empty string or Array')
+        throw Error(INVALID_PARAM_ERR_MSG)
+      }
+
+      function keysPathAsArray (keysPath) {
+        if (_isArray(keysPath)) {
+          return keysPath
+        } else if (_isString(keysPath)) {
+          return keysPath
+            .trim()
+            .split('.')
+            .filter(key => !!key)
+        }
+
+        throw Error(INVALID_PARAM_ERR_MSG)
       }
     }
 
