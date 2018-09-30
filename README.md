@@ -70,6 +70,8 @@ const user = {
 const remapping = {
   user_id: 'userId',
   billing_address: ['billingAddress', ['billingInfo', 'locationInfo']],
+  // Natural point notation for path to nested key also supported like...
+  // billing_address: ['billingAddress', 'billingInfo.locationInfo'],
   interested_in: ['interestedIn', ['customerInfo']]
 }
 
