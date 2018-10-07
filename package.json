@@ -1,7 +1,7 @@
 {
   "name": "curry-remap-keys",
   "version": "1.0.0",
-  "description": "Library for remapping a Javascript object keys names (shallowly) that supports currying.",
+  "description": "Utility for remapping key names of an object shallowly and depply nested too, that supports currying for partial application.",
   "main": "build/index.js",
   "scripts": {
     "dev": "watch 'npm run build' src",
