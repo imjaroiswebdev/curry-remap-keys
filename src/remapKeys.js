@@ -76,14 +76,13 @@ function remapper (mapping) {
         // key to be remapped.
         const newKeyName = remapRule[0]
         const keysPath = remapRule[1]
+        const isArrayKeysPath = _isArray(keysPath) && keysPath.length > 0
+        const isStringKeysPath = _isString(keysPath) && keysPath.length > 0
 
         return !isSimpleRemapRule &&
           (_isArray(remapRule) && remapRule.length === 2) &&
           _isString(newKeyName) &&
-          (
-            _isArray(keysPath) ||
-            _isString(keysPath)
-          )
+          (isArrayKeysPath || isStringKeysPath)
       })()
 
       const INVALID_PARAM_ERR_MSG = 'Invalid parameters were supplied. A remap rule must be a none empty string or Array'
