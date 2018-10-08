@@ -177,7 +177,6 @@ test('If invalid deep remapping rule is supplied then it must throw an exception
     }
   }
 
-  // expect(remapKeys(remapping, user)).toEqual(expected)
   expect(() => {
     remapKeys(remapping, user)
   }).toThrow(/Invalid/)

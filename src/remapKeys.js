@@ -58,7 +58,16 @@ function remapper (mapping) {
     const ogKeys = Object.keys(ogObj)
 
     Object.keys(mapping).forEach(doKeyRemap) // Will apply the mapping
-    ogKeys.forEach(cleanOgKeys) // Will clean the result of the original keys
+    ogKeys.forEach(cleanOgKeys) // Will clean the resulting object of the original key names
+
+    const ogObjPrototype = Object.create(Object.getPrototypeOf(ogObj))
+    const propertyDescriptors = {
+      ...Object.getOwnPropertyDescriptors(cleanObj),
+      ...Object.getOwnPropertyDescriptors(remappedObj)
+    }
+    const updatedObj = Object.defineProperties(ogObjPrototype, propertyDescriptors)
+
+    return updatedObj
 
     function doKeyRemap (ogKeyName) {
       let newKeyName = ''
@@ -93,12 +102,18 @@ function remapper (mapping) {
       } else if (isDeepRemapRule) {
         newKeyName = remapRule[0]
         const pathTillRemapping = keysPathAsArray(remapRule[1])
+        /**
+         * Recreates the complete path to the renamed key with its new name
+         */
         const endOfPathKeys = Object.keys(
           pathValue(pathTillRemapping, ogObj)
         )
           .filter(key => key !== ogKeyName)
           .concat([newKeyName])
 
+        /**
+         * Fills the object with every nested key respective value
+         */
         const updatedObj = endOfPathKeys.reduce(
           fillDeepKeyLevel(pathTillRemapping, ogObj, ogKeyName, newKeyName),
           remappedObj
@@ -131,11 +146,6 @@ function remapper (mapping) {
 
       cleanObj[key] = ogObj[key]
     }
-
-    const ogObjPrototype = Object.create(Object.getPrototypeOf(ogObj))
-    const updatedObj = Object.assign(ogObjPrototype, cleanObj, remappedObj)
-
-    return updatedObj
   }
 }
 
