@@ -122,6 +122,9 @@ console.log(userRemapper(user))
 // }
 ```
 
+## See also
+* [API documentation](docs/API.md)
+
 ## License
 Copyright © 2018, [José Antonio Reyes](https://imjaroiswebdev.tech).
 Released under the [MIT License](LICENSE).

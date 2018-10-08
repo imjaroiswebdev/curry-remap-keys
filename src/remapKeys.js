@@ -7,20 +7,32 @@ import _isString from './internal/_isString'
 import _isArray from './internal/_isArray'
 
 /**
+ * @module curry-remap-keys
+ * @example
+ * const { remapKeys } = require('curry-remap-keys')
+ * // As ES6 Module
+ * import { remapKeys } from 'curry-remap-keys
+ */
+
+/**
  * Remaps (rename) the property keys of an object based on a mapping
  * configuration supplied.
  *
  * @param {object} mapping - Object that defines the remapping of the supplied
  * object property keys.
- * @param {object} ogObj - Original object that will be receiving one or more of
- * its keys remapped.
- * @returns {(object|function)} - New object with remapped key(s) or a function
- * configured for remap the keys of its entry. This object maintains the
+ * @param {object} ogObj - Original object that will be receiving a remap (rename)
+ * of one or more of its keys.
+ * @returns {(object|function)} New object with remapped key(s) or a curried
+ * function configured for remap the keys of its entry. This object maintains the
  * prototype of the original object supplied or if only a mapping configuration
  * its supplied then a function expecting an object for being
  * remapped would be returned.
- * @see README for the signature of the mapping object which varies depending
- * on the kind of remapping.
+ * @example
+ * // Simple remap rule - Will rename a key at the root level of the object
+ * const mapping = { originalKeyName: 'newKeyName' }
+ *
+ * // Deep remap rule - Will rename a deeply nested key of the object
+ * const mapping = { originalKeyName: ['newKeyName', 'path.to.key'] }
  */
 export function remapKeys (mapping, ogObj) {
   const isValidMappingObj = mapping && _isObject(mapping)
