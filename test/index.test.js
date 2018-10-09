@@ -19,6 +19,72 @@ test('After remapping entry object (user) keys user_id and order_id to userId an
   expect(remapKeys(remapping, user)).toEqual(expected)
 })
 
+test('The resulting remapped object must maintain its prototype chain and all its properties enumerables or not', () => {
+  const user = Object.create(
+    {
+      inPrototypeChain: true
+    },
+    {
+      inner_id: {
+        value: '9e947a10-af08-11e8-9b04-d3ce91a97e8d',
+        enumerable: false,
+        configurable: true,
+        writable: true
+      },
+      user_id: {
+        value: '9e947a10-af08-11e8-9b04-d3ce91a97e8d',
+        enumerable: true,
+        configurable: true,
+        writable: true
+      },
+      order_id: {
+        value: 'aa4025d0-af08-11e8-9215-1106c9538c60',
+        enumerable: true,
+        configurable: true,
+        writable: true
+      }
+    }
+  )
+
+  const remapping = {
+    user_id: 'userId',
+    order_id: 'orderId'
+  }
+
+  const expected = Object.create({},
+    {
+      inner_id: {
+        value: '9e947a10-af08-11e8-9b04-d3ce91a97e8d',
+        enumerable: false,
+        configurable: true,
+        writable: true
+      },
+      userId: {
+        value: '9e947a10-af08-11e8-9b04-d3ce91a97e8d',
+        enumerable: true,
+        configurable: true,
+        writable: true
+      },
+      orderId: {
+        value: 'aa4025d0-af08-11e8-9215-1106c9538c60',
+        enumerable: true,
+        configurable: true,
+        writable: true
+      }
+    }
+  )
+  const expectedPrototype = Object.getPrototypeOf(user)
+  const expectedPropertyDescriptor = Object.getOwnPropertyDescriptors(expected)
+
+  const result = remapKeys(remapping, user)
+  const resultingPrototype = Object.getPrototypeOf(result)
+  const resultingPropertyDescriptors = Object.getOwnPropertyDescriptors(result)
+
+  expect(result).toEqual(expected)
+  expect(resultingPrototype).toEqual(expectedPrototype)
+  expect(resultingPropertyDescriptors).toEqual(expectedPropertyDescriptor)
+})
+
 test('After remapping the resulting object must maintain its keys not being remapped ontouched', () => {
   const user = {
     user_id: '9e947a10-af08-11e8-9b04-d3ce91a97e8d',
@@ -177,7 +243,6 @@ test('If invalid deep remapping rule is supplied then it must throw an exception
     }
   }
 
-  // expect(remapKeys(remapping, user)).toEqual(expected)
   expect(() => {
     remapKeys(remapping, user)
   }).toThrow(/Invalid/)
