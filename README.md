@@ -1,8 +1,8 @@
 # curry-remap-keys [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg?style=flt-square)](https://standardjs.com) [![NPM version](https://img.shields.io/npm/v/curry-remap-keys.svg?style=flat)](https://www.npmjs.com/package/curry-remap-keys) [![NPM monthly downloads](https://img.shields.io/npm/dm/curry-remap-keys.svg?style=flat)](https://npmjs.org/package/curry-remap-keys) [![NPM total downloads](https://img.shields.io/npm/dt/curry-remap-keys.svg?style=flat)](https://npmjs.org/package/curry-remap-keys)
 
-> Library for remapping a Javascript object keys names shallowly and depply nested too, that supports currying for partial application.
+> Utility for remapping key names of an object shallowly and depply nested too, that supports currying for partial application.
 
-It embraces functional programming not mutating its entry, but returning a new object that even retains the original prototype.
+It embraces functional programming not mutating its entry, but returning a new object that maintains the original prototype chain and properties enumerables or not, respecting referential transparency.
 
 ## Install
 
@@ -43,6 +43,8 @@ console.log(remappedUser)
 <br>
 
 ## Usage (Nested keys)
+
+> This will follow or create the necessary key names that fulfills the supplied path.
 
 ```javascript
 const { remapKeys } = require('curry-remap-keys')
@@ -119,6 +121,9 @@ console.log(userRemapper(user))
 //   qty: '1'
 // }
 ```
+
+## See also
+* [API documentation](https://github.com/imjaroiswebdev/curry-remap-keys/blob/master/docs/API.md)
 
 ## License
 Copyright © 2018, [José Antonio Reyes](https://imjaroiswebdev.tech).

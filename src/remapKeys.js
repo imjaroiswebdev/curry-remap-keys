@@ -7,20 +7,32 @@ import _isString from './internal/_isString'
 import _isArray from './internal/_isArray'
 
 /**
+ * @module curry-remap-keys
+ * @example
+ * const { remapKeys } = require('curry-remap-keys')
+ * // As ES6 Module
+ * import { remapKeys } from 'curry-remap-keys
+ */
+
+/**
  * Remaps (rename) the property keys of an object based on a mapping
  * configuration supplied.
  *
  * @param {object} mapping - Object that defines the remapping of the supplied
  * object property keys.
- * @param {object} ogObj - Original object that will be receiving one or more of
- * its keys remapped.
- * @returns {(object|function)} - New object with remapped key(s) or a function
- * configured for remap the keys of its entry. This object maintains the
+ * @param {object} ogObj - Original object that will be receiving a remap (rename)
+ * of one or more of its keys.
+ * @returns {(object|function)} New object with remapped key(s) or a curried
+ * function configured for remap the keys of its entry. This object maintains the
  * prototype of the original object supplied or if only a mapping configuration
  * its supplied then a function expecting an object for being
  * remapped would be returned.
- * @see README for the signature of the mapping object which varies depending
- * on the kind of remapping.
+ * @example
+ * // Simple remap rule - Will rename a key at the root level of the object
+ * const mapping = { originalKeyName: 'newKeyName' }
+ *
+ * // Deep remap rule - Will rename a deeply nested key of the object
+ * const mapping = { originalKeyName: ['newKeyName', 'path.to.key'] }
  */
 export function remapKeys (mapping, ogObj) {
   const isValidMappingObj = mapping && _isObject(mapping)
@@ -46,7 +58,23 @@ function remapper (mapping) {
     const ogKeys = Object.keys(ogObj)
 
     Object.keys(mapping).forEach(doKeyRemap) // Will apply the mapping
-    ogKeys.forEach(cleanOgKeys) // Will clean the result of the original keys
+    ogKeys.forEach(cleanOgKeys) // Will clean the resulting object of the original key names
+
+    const ogObjectPropertyDescriptors = Object.getOwnPropertyDescriptors(ogObj)
+    Object.keys(ogObjectPropertyDescriptors).forEach(key => {
+      if (!ogObjectPropertyDescriptors[key].enumerable) {
+        const propertyDescriptor = Object.getOwnPropertyDescriptor(ogObj, key)
+        Object.defineProperty(remappedObj, key, propertyDescriptor) // Reassigns the non enumerables properties to the resulting object
+      }
+    })
+    const ogObjPrototype = Object.getPrototypeOf(ogObj)
+    const propertyDescriptors = {
+      ...Object.getOwnPropertyDescriptors(cleanObj),
+      ...Object.getOwnPropertyDescriptors(remappedObj)
+    }
+    const updatedObj = Object.create(ogObjPrototype, propertyDescriptors)
+
+    return updatedObj
 
     function doKeyRemap (ogKeyName) {
       let newKeyName = ''
@@ -64,14 +92,13 @@ function remapper (mapping) {
         // key to be remapped.
         const newKeyName = remapRule[0]
         const keysPath = remapRule[1]
+        const isArrayKeysPath = _isArray(keysPath) && keysPath.length > 0
+        const isStringKeysPath = _isString(keysPath) && keysPath.length > 0
 
         return !isSimpleRemapRule &&
           (_isArray(remapRule) && remapRule.length === 2) &&
           _isString(newKeyName) &&
-          (
-            _isArray(keysPath) ||
-            _isString(keysPath)
-          )
+          (isArrayKeysPath || isStringKeysPath)
       })()
 
       const INVALID_PARAM_ERR_MSG = 'Invalid parameters were supplied. A remap rule must be a none empty string or Array'
@@ -82,12 +109,18 @@ function remapper (mapping) {
       } else if (isDeepRemapRule) {
         newKeyName = remapRule[0]
         const pathTillRemapping = keysPathAsArray(remapRule[1])
+        /**
+         * Recreates the complete path to the renamed key with its new name
+         */
         const endOfPathKeys = Object.keys(
           pathValue(pathTillRemapping, ogObj)
         )
           .filter(key => key !== ogKeyName)
           .concat([newKeyName])
 
+        /**
+         * Fills the object with every nested key respective value
+         */
         const updatedObj = endOfPathKeys.reduce(
           fillDeepKeyLevel(pathTillRemapping, ogObj, ogKeyName, newKeyName),
           remappedObj
@@ -120,11 +153,6 @@ function remapper (mapping) {
 
       cleanObj[key] = ogObj[key]
     }
-
-    const ogObjPrototype = Object.create(Object.getPrototypeOf(ogObj))
-    const updatedObj = Object.assign(ogObjPrototype, cleanObj, remappedObj)
-
-    return updatedObj
   }
 }
 
