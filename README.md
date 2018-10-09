@@ -2,7 +2,7 @@
 
 > Utility for remapping key names of an object shallowly and depply nested too, that supports currying for partial application.
 
-It embraces functional programming not mutating its entry, but returning a new object that even retains the original prototype respect referential transparency.
+It embraces functional programming not mutating its entry, but returning a new object that maintains the original prototype chain and properties enumerables or not, respecting referential transparency.
 
 ## Install
 

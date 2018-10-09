@@ -60,12 +60,19 @@ function remapper (mapping) {
     Object.keys(mapping).forEach(doKeyRemap) // Will apply the mapping
     ogKeys.forEach(cleanOgKeys) // Will clean the resulting object of the original key names
 
-    const ogObjPrototype = Object.create(Object.getPrototypeOf(ogObj))
+    const ogObjectPropertyDescriptors = Object.getOwnPropertyDescriptors(ogObj)
+    Object.keys(ogObjectPropertyDescriptors).forEach(key => {
+      if (!ogObjectPropertyDescriptors[key].enumerable) {
+        const propertyDescriptor = Object.getOwnPropertyDescriptor(ogObj, key)
+        Object.defineProperty(remappedObj, key, propertyDescriptor) // Reassigns the non enumerables properties to the resulting object
+      }
+    })
+    const ogObjPrototype = Object.getPrototypeOf(ogObj)
     const propertyDescriptors = {
       ...Object.getOwnPropertyDescriptors(cleanObj),
       ...Object.getOwnPropertyDescriptors(remappedObj)
     }
-    const updatedObj = Object.defineProperties(ogObjPrototype, propertyDescriptors)
+    const updatedObj = Object.create(ogObjPrototype, propertyDescriptors)
 
     return updatedObj
 
