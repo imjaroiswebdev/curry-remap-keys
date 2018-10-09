@@ -123,7 +123,7 @@ console.log(userRemapper(user))
 ```
 
 ## See also
-* [API documentation](docs/API.md)
+* [API documentation](https://github.com/imjaroiswebdev/curry-remap-keys/blob/master/docs/API.md)
 
 ## License
 Copyright © 2018, [José Antonio Reyes](https://imjaroiswebdev.tech).
