@@ -5,7 +5,7 @@
 ```js
 const { remapKeys } = require('curry-remap-keys')
 // As ES6 Module
-import { remapKeys } from 'curry-remap-keys
+import { remapKeys } from 'curry-remap-keys'
 ```
 <a name="module_curry-remap-keys.remapKeys"></a>
 
