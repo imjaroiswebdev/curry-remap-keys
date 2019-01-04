@@ -11,7 +11,7 @@ import _isArray from './internal/_isArray'
  * @example
  * const { remapKeys } = require('curry-remap-keys')
  * // As ES6 Module
- * import { remapKeys } from 'curry-remap-keys
+ * import { remapKeys } from 'curry-remap-keys'
  */
 
 /**
