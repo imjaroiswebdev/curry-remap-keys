@@ -3,22 +3,30 @@ import { cloneObj } from './cloneObj'
 import _isObject from './internal/_isObject'
 
 /**
+ * @typedef {import('./types').RemappableObject} RemappableObject
+ * @typedef {import('./types').RemappableValue} RemappableValue
+ */
+
+/**
  * Assigns a value to an object nested key.
  *
  * @private
- * @param {any} value - Assignment to be done.
- * @param {array} keysPath - Array with property keys ordered as the
+ * @template {RemappableObject} TObject
+ * @param {RemappableValue} value - Assignment to be done.
+ * @param {string[]} keysPath - Array with property keys ordered as the
  * path that will be followed to lookup through the nested object levels
  * till the target key.
- * @param {object} ogObject - Object that will be updated.
- * @returns {object} - New object that is a deep clone of the supplied
+ * @param {TObject} ogObject - Object that will be updated.
+ * @returns {TObject} - New object that is a deep clone of the supplied
  * object.
  */
 export function pathAssign (value, keysPath, ogObject) {
+  /** @type {TObject} */
   const ogObjectClone = cloneObj(ogObject) // Clone of the original object
   const lastIndex = keysPath.length - 1
   const endKey = keysPath[lastIndex]
   const followPath = keysPath.filter((key, index) => index !== (lastIndex))
+  /** @type {RemappableObject} */
   let refToOgObject = ogObjectClone
 
   followPath.forEach(key => {

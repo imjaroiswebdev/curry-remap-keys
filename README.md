@@ -122,6 +122,58 @@ console.log(userRemapper(user))
 // }
 ```
 
+## TypeScript & editor support
+
+`curry-remap-keys` now ships TypeScript declaration files generated from its
+JSDoc comments. Projects using editors with IntelliSense or TypeScript can
+import both the runtime helpers and supporting typedefs:
+
+```ts
+import { remapKeys, type RemapMapping } from 'curry-remap-keys'
+
+type User = {
+  user_id: string
+  customerInfo: {
+    interested_in: string[]
+  }
+}
+
+type RemappedUser = {
+  userId: string
+  customerInfo: {
+    interestedIn: string[]
+  }
+}
+
+const remapping: RemapMapping<User, RemappedUser> = {
+  user_id: 'userId',
+  interested_in: ['interestedIn', ['customerInfo']]
+}
+
+const remapped = remapKeys(remapping, {
+  user_id: 'id-1',
+  customerInfo: { interested_in: [] }
+})
+
+remapped.userId // strongly typed string
+```
+
+During development you can regenerate declaration files and verify typings via:
+
+```bash
+npm run build:types
+npm run test:types
+```
+
+## Development
+
+Verify code style and runtime behavior locally with the bundled npm scripts:
+
+```bash
+npm run lint
+npm test
+```
+
 ## See also
 * [API documentation](https://github.com/imjaroiswebdev/curry-remap-keys/blob/master/docs/API.md)
 

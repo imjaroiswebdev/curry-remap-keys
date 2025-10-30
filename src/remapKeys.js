@@ -7,6 +7,10 @@ import _isString from './internal/_isString'
 import _isArray from './internal/_isArray'
 
 /**
+ * @typedef {import('./types').RemappableObject} RemappableObject
+ */
+
+/**
  * @module curry-remap-keys
  * @example
  * const { remapKeys } = require('curry-remap-keys')
@@ -18,15 +22,38 @@ import _isArray from './internal/_isArray'
  * Remaps (rename) the property keys of an object based on a mapping
  * configuration supplied.
  *
- * @param {object} mapping - Object that defines the remapping of the supplied
- * object property keys.
- * @param {object} ogObj - Original object that will be receiving a remap (rename)
- * of one or more of its keys.
- * @returns {(object|function)} New object with remapped key(s) or a curried
- * function configured for remap the keys of its entry. This object maintains the
- * prototype of the original object supplied or if only a mapping configuration
- * its supplied then a function expecting an object for being
- * remapped would be returned.
+ * @template {RemappableObject} TObject
+ * @template {RemappableObject} [TResult=TObject]
+ * @overload
+ * @param {import('./types').RemapMapping<TObject, TResult>} mapping - Object that defines
+ * the remapping of the supplied object property keys.
+ * @param {TObject} ogObj - Original object that will be receiving a remap
+ * (rename) of one or more of its keys.
+ * @returns {TResult} New object with remapped key(s).
+ */
+
+/**
+ * @template {RemappableObject} TObject
+ * @template {RemappableObject} [TResult=TObject]
+ * @overload
+ * @param {import('./types').RemapMapping<TObject, TResult>} mapping - Object that defines
+ * the remapping of the supplied object property keys.
+ * @returns {import('./types').CurriedRemapper<TObject, TResult>} Curried
+ * function configured for remapping the keys of a later supplied object.
+ */
+
+/**
+ * @template {RemappableObject} TObject
+ * @template {RemappableObject} [TResult=TObject]
+ * @param {import('./types').RemapMapping<TObject, TResult>} mapping - Object that defines
+ * the remapping of the supplied object property keys.
+ * @param {TObject} [ogObj] - Original object that will be receiving a remap
+ * (rename) of one or more of its keys.
+ * @returns {TResult | import('./types').CurriedRemapper<TObject, TResult>}
+ * New object with remapped key(s) or a curried function configured for remap
+ * the keys of its entry. This object maintains the prototype of the original
+ * object supplied or if only a mapping configuration is supplied then a
+ * function expecting an object for being remapped would be returned.
  * @example
  * // Simple remap rule - Will rename a key at the root level of the object
  * const mapping = { originalKeyName: 'newKeyName' }
@@ -50,9 +77,17 @@ export function remapKeys (mapping, ogObj) {
   return remapper(mapping)(ogObj)
 }
 
+/**
+ * @template {RemappableObject} TObject
+ * @template {RemappableObject} [TResult=TObject]
+ * @param {import('./types').RemapMapping<TObject, TResult>} mapping
+ * @returns {import('./types').CurriedRemapper<TObject, TResult>}
+ */
 function remapper (mapping) {
   return function (ogObj) {
+    /** @type {RemappableObject} */
     let remappedObj = {}
+    /** @type {RemappableObject} */
     let cleanObj = {}
     const blacklist = Object.keys(mapping)
     const ogKeys = Object.keys(ogObj)
@@ -113,7 +148,7 @@ function remapper (mapping) {
          * Recreates the complete path to the renamed key with its new name
          */
         const endOfPathKeys = Object.keys(
-          pathValue(pathTillRemapping, ogObj)
+          /** @type {RemappableObject} */ (pathValue(pathTillRemapping, ogObj))
         )
           .filter(key => key !== ogKeyName)
           .concat([newKeyName])
@@ -131,6 +166,10 @@ function remapper (mapping) {
         throw Error(INVALID_PARAM_ERR_MSG)
       }
 
+      /**
+       * @param {import('./types').NestedPath} keysPath
+       * @returns {string[]}
+       */
       function keysPathAsArray (keysPath) {
         if (_isArray(keysPath)) {
           return keysPath
@@ -145,6 +184,10 @@ function remapper (mapping) {
       }
     }
 
+    /**
+     * @param {string} key
+     * @returns {void}
+     */
     function cleanOgKeys (key) {
       const isBlackListed = blacklist.includes(key)
       if (isBlackListed) {
@@ -156,6 +199,14 @@ function remapper (mapping) {
   }
 }
 
+/**
+ * @template {RemappableObject} TObject
+ * @param {string[]} partialKeysPath
+ * @param {TObject} ogObj
+ * @param {string} ogKeyName
+ * @param {string} newKeyName
+ * @returns {(updatedObj: RemappableObject, key: string) => RemappableObject}
+ */
 function fillDeepKeyLevel (partialKeysPath, ogObj, ogKeyName, newKeyName) {
   return function (updatedObj, key) {
     const keysPath = [...partialKeysPath, key]
