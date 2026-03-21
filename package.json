@@ -3,20 +3,24 @@
   "version": "2.2.1",
   "description": "Utility for remapping key names of an object shallowly and depply nested too, that supports currying for partial application.",
   "main": "build/index.js",
+  "types": "types/index.d.ts",
+  "files": [
+    "build",
+    "types"
+  ],
   "scripts": {
     "dev": "watch 'npm run build' src",
-    "build": "babel src -d build",
+    "build": "npm run build:js && npm run build:types",
+    "build:js": "babel src -d build --copy-files",
+    "build:types": "tsc -p tsconfig.types.json",
     "build:docs": "npx jsdoc src -r -a all README.md",
     "postbuild:docs": "npx jsdoc-to-markdown  --heading-depth 1 src/remapKeys.js > docs/API.md",
-    "test": "standard && jest",
-    "test:watch": "npm test -- --watch",
-    "prepublish": "npm run build",
+    "lint": "eslint --ext .js src",
+    "test": "npm run lint && jest",
+    "test:watch": "jest --watch",
+    "test:types": "tsc -p tsconfig.types.json --noEmit",
+    "prepublishOnly": "npm run build",
     "release": "np"
-  },
-  "standard": {
-    "ignore": [
-      "*.test.js"
-    ]
   },
   "repository": {
     "type": "git",
@@ -49,22 +53,30 @@
     "url": "https://github.com/imjaroiswebdev/curry-remap-keys/issues"
   },
   "homepage": "https://github.com/imjaroiswebdev/curry-remap-keys#readme",
+  "engines": {
+    "node": ">=18.18"
+  },
   "dependencies": {},
   "devDependencies": {
-    "@babel/cli": "^7.0.0",
-    "@babel/core": "^7.0.0",
-    "@babel/preset-env": "^7.0.0",
-    "babel-core": "^7.0.0-bridge.0",
-    "eslint": "^5.5.0",
-    "eslint-config-standard": "^12.0.0",
-    "eslint-plugin-import": "^2.14.0",
-    "eslint-plugin-node": "^7.0.1",
-    "eslint-plugin-promise": "^4.0.0",
-    "eslint-plugin-standard": "^4.0.0",
-    "jest": "^23.5.0",
-    "jsdoc-to-markdown": "^4.0.1",
-    "np": "^3.0.4",
-    "standard": "^12.0.1",
+    "@babel/cli": "^7.24.5",
+    "@babel/core": "^7.24.5",
+    "@babel/preset-env": "^7.24.5",
+    "babel-jest": "^29.7.0",
+    "eslint": "^8.57.0",
+    "eslint-config-standard": "^17.1.0",
+    "eslint-plugin-import": "^2.29.1",
+    "eslint-plugin-n": "^16.6.2",
+    "eslint-plugin-promise": "^6.1.1",
+    "jest": "^29.7.0",
+    "jsdoc-to-markdown": "^8.0.0",
+    "np": "^10.0.3",
+    "typescript": "^5.4.5",
     "watch": "^1.0.2"
+  },
+  "jest": {
+    "transform": {
+      "^.+\\.js$": "babel-jest"
+    },
+    "testEnvironment": "node"
   }
 }

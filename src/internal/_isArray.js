@@ -3,7 +3,8 @@
  *
  * @private
  * @function
- * @param {object} arg - Entry that will be checked as array
+ * @param {unknown} arg - Entry that will be checked as array
+ * @returns {arg is unknown[]}
  */
 export default Array.isArray || function (arg) {
   return Object.prototype.toString.call(arg) === '[object Array]'
