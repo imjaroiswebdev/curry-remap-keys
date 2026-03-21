@@ -58,6 +58,7 @@
 - **JSDoc-to-d.ts gaps**: Complex generic behavior may need refactoring for TypeScript inference. Mitigate by iteratively running `tsc --noEmit` and adjusting JSDoc, possibly introducing helper typedef files.
 - **Tooling drift**: Running TypeScript post-Babel may require ensuring source files remain ES module compatible. Keep declarations compiled directly from `src` (not `build`) to avoid Babel-specific syntax issues.
 - **Package size**: Additional `types/` directory is small; ensure `.npmignore` does not exclude it.
+- **Registry-restricted environments**: Lockfile regeneration can fail when package registry access is blocked (e.g., HTTP 403 policy restrictions). Treat this as a **release-blocker for dependency refresh validation**, but not as a blocker for source/runtime behavior validation when lint, unit tests, and type checks still pass against the checked-in `node_modules`.
 
 ## 5. Acceptance Checklist
 - [ ] Dependencies/tooling upgraded and lockfile regenerated with current npm.
@@ -67,3 +68,4 @@
 - [ ] Documentation reflects typing support.
 - [ ] Existing Jest test suite continues to pass, confirming runtime behavior remains correct.
 - [ ] New or updated tests (if any) are added and pass.
+- [ ] `npm install --package-lock-only --ignore-scripts` succeeds in an environment with registry access, and any lockfile updates are committed.
